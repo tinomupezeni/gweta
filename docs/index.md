@@ -88,9 +88,9 @@ Expose Gweta to AI agents like Claude Desktop:
 ## Documentation
 
 - [Getting Started](getting-started.md) - 5-minute quickstart
-- [Concepts](concepts/architecture.md) - How Gweta works
-- [Guides](guides/validation.md) - Deep-dive tutorials
+- [Architecture](concepts/architecture.md) - How Gweta works
 - [API Reference](api/reference.md) - Full API documentation
+- [Examples](examples/full-pipeline.md) - Complete pipeline example
 
 ## Design Principles
 
@@ -104,4 +104,4 @@ Expose Gweta to AI agents like Claude Desktop:
 
 ## License
 
-MIT License - see [LICENSE](https://github.com/yourusername/gweta/blob/main/LICENSE)
+MIT License - see [LICENSE](https://github.com/tinomupezeni/gweta/blob/main/LICENSE)

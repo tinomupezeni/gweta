@@ -227,7 +227,6 @@ Then Claude can use tools like:
 
 ## Next Steps
 
-- [Architecture Overview](concepts/architecture.md)
-- [Validation Deep-Dive](guides/validation.md)
-- [Domain Rules Guide](guides/domain-rules.md)
-- [MCP Integration](guides/mcp-integration.md)
+- [Architecture Overview](concepts/architecture.md) - Understand how Gweta works
+- [API Reference](api/reference.md) - Full API documentation
+- [Full Pipeline Example](examples/full-pipeline.md) - Complete end-to-end example
