@@ -57,6 +57,8 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Guides:
+      - Intelligence Layer: guides/intelligence.md
   - Concepts:
       - Architecture: concepts/architecture.md
   - API Reference: api/reference.md

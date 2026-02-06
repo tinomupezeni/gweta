@@ -10,6 +10,14 @@ This guide will get you up and running with Gweta in 5 minutes.
 pip install gweta
 ```
 
+### With Intelligence Layer (Recommended)
+
+```bash
+pip install gweta[intelligence]
+```
+
+This enables intent-aware filtering with ML-powered relevance scoring.
+
 ### With Vector Store Support
 
 ```bash
@@ -34,9 +42,49 @@ pip install gweta[all]
 
 ## Basic Usage
 
-### 1. Validate Chunks
+### 1. Intent-Aware Ingestion (Recommended)
 
-The simplest use case is validating chunks before loading them into a vector store:
+The most powerful way to use Gweta is with intent-aware filtering:
+
+```python
+from gweta.intelligence import Pipeline, SystemIntent
+from gweta import ChromaStore
+
+# Define your system's intent
+intent = SystemIntent(
+    name="My Knowledge Base",
+    description="Answers questions about Zimbabwe business",
+    core_questions=[
+        "How do I register a business in Zimbabwe?",
+        "What are ZIMRA tax requirements?",
+    ],
+    relevant_topics=["Zimbabwe business", "ZIMRA", "EcoCash"],
+    irrelevant_topics=["US regulations", "cryptocurrency", "forex"],
+)
+
+# Or load from YAML file
+# intent = SystemIntent.from_yaml("intents/my_system.yaml")
+
+# Create pipeline with store
+store = ChromaStore(collection_name="my-kb")
+pipeline = Pipeline(intent=intent, store=store)
+
+# Ingest chunks - irrelevant content is automatically filtered
+import asyncio
+
+async def ingest_data(chunks):
+    result = await pipeline.ingest(chunks)
+    print(f"Ingested: {result.ingested} relevant chunks")
+    print(f"Rejected: {result.rejected_count} irrelevant chunks")
+    print(f"Acceptance rate: {result.acceptance_rate:.0%}")
+    return result
+
+asyncio.run(ingest_data(my_chunks))
+```
+
+### 2. Validate Chunks (Basic)
+
+For simple validation without intent filtering:
 
 ```python
 from gweta import ChunkValidator, Chunk
@@ -227,6 +275,7 @@ Then Claude can use tools like:
 
 ## Next Steps
 
+- [Intelligence Layer Guide](guides/intelligence.md) - Deep dive into intent-aware filtering
 - [Architecture Overview](concepts/architecture.md) - Understand how Gweta works
 - [API Reference](api/reference.md) - Full API documentation
 - [Full Pipeline Example](examples/full-pipeline.md) - Complete end-to-end example

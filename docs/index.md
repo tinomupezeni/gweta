@@ -12,40 +12,73 @@ BEFORE: Document → Parser → Chunks → Vector DB → Bad answers → Debug �
 
 RAG pipelines often fail silently. You parse documents, chunk them, load them into a vector store — and only discover quality issues when your AI starts hallucinating.
 
+Even worse: **storing everything** pollutes your vector store with irrelevant content, leading to noisy retrieval and degraded answers.
+
 ## The Solution
 
 ```
-AFTER:  Document → Gweta (acquire + validate + ingest) → Quality chunks → Good answers
+AFTER:  Document → Gweta (acquire + validate + filter + ingest) → Quality chunks → Good answers
 ```
 
-Gweta validates data at every stage:
+Gweta validates and filters data at every stage:
 
 1. **Extraction Quality** - Is the text properly extracted?
 2. **Chunk Quality** - Are chunks coherent and information-dense?
-3. **Domain Rules** - Does the content match known facts?
-4. **KB Health** - Is the knowledge base fresh and complete?
+3. **Intent Relevance** - Does the content match your system's purpose?
+4. **Domain Rules** - Does the content match known facts?
+5. **KB Health** - Is the knowledge base fresh and complete?
 
 ## Quick Start
 
 ```bash
-pip install gweta
+pip install gweta[intelligence]
 ```
 
 ```python
-from gweta import ChunkValidator, Chunk
+from gweta.intelligence import Pipeline, SystemIntent
+from gweta import ChromaStore
 
-# Validate chunks before loading
-validator = ChunkValidator()
-chunks = [
-    Chunk(text="Your content here...", source="document.pdf", metadata={})
-]
+# Define what your RAG system is meant to do
+intent = SystemIntent(
+    name="My Knowledge Base",
+    description="Answers questions about Zimbabwe business registration",
+    core_questions=["How do I register a business in Zimbabwe?"],
+    relevant_topics=["Zimbabwe business", "ZIMRA", "EcoCash"],
+    irrelevant_topics=["US regulations", "cryptocurrency"],
+)
 
-report = validator.validate_batch(chunks)
-print(f"Quality Score: {report.avg_quality_score}")
-print(f"Passed: {report.passed}/{report.total_chunks}")
+# Create intent-aware pipeline
+store = ChromaStore(collection_name="my-kb")
+pipeline = Pipeline(intent=intent, store=store)
+
+# Ingest with automatic relevance filtering
+result = await pipeline.ingest(chunks)
+print(f"Ingested: {result.ingested} relevant chunks")
+print(f"Rejected: {result.rejected_count} irrelevant chunks")
 ```
 
 ## Key Features
+
+### Intelligence Layer (NEW in v0.2.0)
+
+Gweta understands your system's purpose and filters content for relevance:
+
+- **SystemIntent** - Define what your RAG system is meant to do (YAML-based)
+- **RelevanceFilter** - Score chunks by semantic similarity to your intent
+- **Pipeline** - Unified API for intent-aware ingestion
+
+```python
+# Load intent from YAML
+intent = SystemIntent.from_yaml("intents/my_system.yaml")
+
+# Filter chunks by relevance
+filter = RelevanceFilter(intent)
+report = filter.filter_batch(chunks)
+
+# Only relevant chunks get stored
+accepted = report.accepted()  # Chunks with score >= 0.6
+rejected = report.rejected_count  # Irrelevant content filtered out
+```
 
 ### Multi-Source Acquisition
 
@@ -88,6 +121,7 @@ Expose Gweta to AI agents like Claude Desktop:
 ## Documentation
 
 - [Getting Started](getting-started.md) - 5-minute quickstart
+- [Intelligence Layer](guides/intelligence.md) - Intent-aware filtering guide
 - [Architecture](concepts/architecture.md) - How Gweta works
 - [API Reference](api/reference.md) - Full API documentation
 - [Examples](examples/full-pipeline.md) - Complete pipeline example

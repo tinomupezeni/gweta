@@ -56,6 +56,199 @@ issue = QualityIssue(
 
 ---
 
+## Intelligence Layer
+
+### SystemIntent
+
+Defines what your RAG system is meant to do.
+
+```python
+from gweta.intelligence import SystemIntent
+
+# Create programmatically
+intent = SystemIntent(
+    name="My Knowledge Base",
+    description="Answers questions about Zimbabwe business",
+    target_users=["graduates", "entrepreneurs"],
+    core_questions=[
+        "How do I register a business in Zimbabwe?",
+        "What are ZIMRA tax requirements?",
+    ],
+    relevant_topics=["Zimbabwe business", "ZIMRA", "EcoCash"],
+    irrelevant_topics=["US regulations", "cryptocurrency"],
+)
+
+# Load from YAML
+intent = SystemIntent.from_yaml("intents/my_system.yaml")
+
+# Check if topic is irrelevant
+intent.is_irrelevant_topic("Invest in Bitcoin now!")  # True
+```
+
+**Attributes:**
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `name` | `str` | System name |
+| `description` | `str` | What the system does |
+| `target_users` | `list[str]` | Who uses the system |
+| `core_questions` | `list[str]` | Questions it should answer well |
+| `relevant_topics` | `list[str]` | Topics to include |
+| `irrelevant_topics` | `list[str]` | Topics to reject |
+| `min_relevance_score` | `float` | Accept threshold (default: 0.6) |
+| `review_threshold` | `float` | Review threshold (default: 0.4) |
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `from_yaml(path)` | `SystemIntent` | Load from YAML file |
+| `from_dict(data)` | `SystemIntent` | Load from dictionary |
+| `to_yaml()` | `str` | Export as YAML |
+| `to_dict()` | `dict` | Export as dictionary |
+| `is_irrelevant_topic(text)` | `bool` | Check if text contains irrelevant topics |
+
+### RelevanceFilter
+
+Scores and filters chunks by semantic similarity to intent.
+
+```python
+from gweta.intelligence import RelevanceFilter
+
+filter = RelevanceFilter(intent=intent)
+
+# Filter single chunk
+result = filter.filter(chunk)
+print(f"Score: {result.relevance_score:.2f}")
+print(f"Decision: {result.decision}")  # ACCEPT, REVIEW, or REJECT
+
+# Filter batch
+report = filter.filter_batch(chunks)
+print(f"Accepted: {report.accepted_count}")
+print(f"Rejected: {report.rejected_count}")
+
+# Get accepted chunks with metadata
+accepted = report.accepted()
+```
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `filter(chunk)` | `RelevanceResult` | Filter single chunk |
+| `filter_batch(chunks)` | `RelevanceReport` | Filter multiple chunks |
+| `score(chunk)` | `float` | Get relevance score only |
+
+### RelevanceResult
+
+Result of filtering a single chunk.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `chunk` | `Chunk` | The chunk that was filtered |
+| `relevance_score` | `float` | Relevance score (0.0 - 1.0) |
+| `decision` | `RelevanceDecision` | ACCEPT, REVIEW, or REJECT |
+| `matched_topics` | `list[str]` | Topics found in chunk |
+| `rejection_reason` | `str \| None` | Why it was rejected |
+| `accepted` | `bool` | True if decision is ACCEPT |
+| `needs_review` | `bool` | True if decision is REVIEW |
+| `rejected` | `bool` | True if decision is REJECT |
+
+### RelevanceReport
+
+Report from filtering multiple chunks.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `results` | `list[RelevanceResult]` | All results |
+| `total_chunks` | `int` | Total processed |
+| `accepted_count` | `int` | Number accepted |
+| `review_count` | `int` | Number needing review |
+| `rejected_count` | `int` | Number rejected |
+| `acceptance_rate` | `float` | Accepted / total |
+| `rejection_rate` | `float` | Rejected / total |
+| `avg_relevance_score` | `float` | Average score |
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `accepted()` | `list[Chunk]` | Get accepted chunks with metadata |
+| `for_review()` | `list[Chunk]` | Get chunks needing review |
+
+### EmbeddingEngine
+
+Wrapper for sentence-transformers.
+
+```python
+from gweta.intelligence import EmbeddingEngine
+
+# Default model: all-MiniLM-L6-v2
+engine = EmbeddingEngine()
+
+# Custom model
+engine = EmbeddingEngine(model_name="all-mpnet-base-v2")
+
+# Embed text
+vector = engine.embed("Zimbabwe business registration")
+
+# Batch embed
+vectors = engine.embed_batch(["text1", "text2"])
+
+# Compute similarity
+similarity = engine.similarity(vector1, vector2)
+```
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `embed(text)` | `np.ndarray` | Embed single text |
+| `embed_batch(texts)` | `np.ndarray` | Embed multiple texts |
+| `similarity(v1, v2)` | `float` | Cosine similarity |
+| `similarity_to_reference(vectors, ref)` | `np.ndarray` | Batch similarity |
+
+### Pipeline
+
+Unified API for intent-aware ingestion.
+
+```python
+from gweta.intelligence import Pipeline
+
+# With store - full pipeline
+pipeline = Pipeline(intent=intent, store=store)
+result = await pipeline.ingest(chunks)
+
+# Without store - filter only
+pipeline = Pipeline(intent=intent, store=None)
+report = pipeline.filter_only(chunks)
+
+# Score single chunk
+scores = pipeline.score_chunk(chunk)
+```
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `ingest(chunks)` | `PipelineResult` | Filter and ingest to store |
+| `filter_only(chunks)` | `RelevanceReport` | Filter without storing |
+| `score_chunk(chunk)` | `dict` | Get quality and relevance scores |
+
+### PipelineResult
+
+Result from pipeline ingestion.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `ingested` | `int` | Chunks successfully stored |
+| `rejected_count` | `int` | Chunks rejected |
+| `review_count` | `int` | Chunks needing review |
+| `acceptance_rate` | `float` | Ingested / total |
+| `relevance_report` | `RelevanceReport` | Full relevance report |
+
+---
+
 ## Validation
 
 ### ChunkValidator
