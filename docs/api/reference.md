@@ -241,11 +241,38 @@ class BaseStore(ABC):
 ```python
 from gweta import ChromaStore
 
+# Default: Uses SentenceTransformer "all-MiniLM-L6-v2" embeddings
+store = ChromaStore(collection_name="my_docs")
+
+# With persistence
 store = ChromaStore(
     collection_name="my_docs",
     persist_directory="./chroma_data",
 )
+
+# With custom embedding function
+from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+embed_fn = SentenceTransformerEmbeddingFunction(model_name="all-mpnet-base-v2")
+store = ChromaStore(
+    collection_name="my_docs",
+    embedding_function=embed_fn,
+)
+
+# With OpenAI embeddings
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
+embed_fn = OpenAIEmbeddingFunction(api_key="sk-...")
+store = ChromaStore(collection_name="my_docs", embedding_function=embed_fn)
 ```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `collection_name` | `str` | required | Name of the collection |
+| `client` | `chromadb.Client` | `None` | Existing ChromaDB client |
+| `embedding_function` | `EmbeddingFunction` | `SentenceTransformer` | Custom embedding function |
+| `persist_directory` | `str` | `None` | Directory for persistence |
+| `use_default_embeddings` | `bool` | `True` | Use default embeddings if none provided |
 
 ### QdrantStore
 

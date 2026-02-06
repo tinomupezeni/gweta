@@ -83,11 +83,33 @@ async def main():
 
     print(f"Extracted {len(result.chunks)} validated chunks")
 
-    # Ingest to vector store
+    # Ingest to vector store (uses default all-MiniLM-L6-v2 embeddings)
     store = ChromaStore(collection_name="my-knowledge-base")
     await store.add(result.chunks)
 
 asyncio.run(main())
+```
+
+### ChromaStore with Custom Embeddings
+
+```python
+from gweta import ChromaStore
+
+# Default: Uses SentenceTransformer "all-MiniLM-L6-v2"
+store = ChromaStore("my-kb")
+
+# With custom SentenceTransformer model
+from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+embed_fn = SentenceTransformerEmbeddingFunction(model_name="all-mpnet-base-v2")
+store = ChromaStore("my-kb", embedding_function=embed_fn)
+
+# With OpenAI embeddings
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
+embed_fn = OpenAIEmbeddingFunction(api_key="sk-...")
+store = ChromaStore("my-kb", embedding_function=embed_fn)
+
+# With persistence
+store = ChromaStore("my-kb", persist_directory="./chroma_data")
 ```
 
 ### Use with LangChain

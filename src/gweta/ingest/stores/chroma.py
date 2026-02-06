@@ -4,7 +4,7 @@ This module provides integration with ChromaDB for
 storing and querying validated chunks.
 """
 
-from typing import Any
+from typing import Any, Callable
 
 from gweta.core.exceptions import IngestionError
 from gweta.core.logging import get_logger
@@ -14,6 +14,31 @@ from gweta.ingest.stores.base import AddResult, BaseStore, StoreStats
 logger = get_logger(__name__)
 
 
+def _get_default_embedding_function() -> Any:
+    """Get the default embedding function.
+
+    Uses ChromaDB's default SentenceTransformer embedding function.
+    Falls back to None if sentence-transformers is not installed.
+
+    Returns:
+        Embedding function or None
+    """
+    try:
+        from chromadb.utils.embedding_functions import (
+            SentenceTransformerEmbeddingFunction,
+        )
+        return SentenceTransformerEmbeddingFunction(
+            model_name="all-MiniLM-L6-v2"
+        )
+    except ImportError:
+        logger.warning(
+            "sentence-transformers not installed. "
+            "Install with: pip install sentence-transformers "
+            "or provide a custom embedding_function."
+        )
+        return None
+
+
 class ChromaStore(BaseStore):
     """ChromaDB vector store adapter.
 
@@ -21,31 +46,69 @@ class ChromaStore(BaseStore):
     chunks in ChromaDB.
 
     Example:
+        Basic usage (uses default all-MiniLM-L6-v2 embeddings):
+
         >>> store = ChromaStore("my_collection")
         >>> await store.add(chunks)
         >>> results = await store.query("What is...", n_results=5)
+
+        With custom embedding function:
+
+        >>> from chromadb.utils.embedding_functions import (
+        ...     SentenceTransformerEmbeddingFunction
+        ... )
+        >>> embed_fn = SentenceTransformerEmbeddingFunction(
+        ...     model_name="all-mpnet-base-v2"
+        ... )
+        >>> store = ChromaStore("my_collection", embedding_function=embed_fn)
+
+        With OpenAI embeddings:
+
+        >>> from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
+        >>> embed_fn = OpenAIEmbeddingFunction(api_key="sk-...")
+        >>> store = ChromaStore("my_collection", embedding_function=embed_fn)
+
+        With persistence:
+
+        >>> store = ChromaStore(
+        ...     "my_collection",
+        ...     persist_directory="./chroma_data"
+        ... )
     """
 
     def __init__(
         self,
         collection_name: str,
         client: Any = None,
-        embedding_function: Any = None,
+        embedding_function: Any | None = None,
         persist_directory: str | None = None,
+        use_default_embeddings: bool = True,
     ) -> None:
         """Initialize ChromaStore.
 
         Args:
             collection_name: Name of the collection
             client: Existing ChromaDB client (creates new if not provided)
-            embedding_function: Embedding function (uses default if not provided)
+            embedding_function: Custom embedding function. If not provided and
+                use_default_embeddings is True, uses SentenceTransformer
+                with "all-MiniLM-L6-v2" model.
             persist_directory: Directory for persistence (None for in-memory)
+            use_default_embeddings: If True and no embedding_function provided,
+                uses the default SentenceTransformer embeddings. Set to False
+                to disable and use ChromaDB's internal default. Default: True.
         """
         self._collection_name = collection_name
         self._client = client
-        self._embedding_function = embedding_function
         self._persist_directory = persist_directory
         self._collection = None
+
+        # Set up embedding function
+        if embedding_function is not None:
+            self._embedding_function = embedding_function
+        elif use_default_embeddings:
+            self._embedding_function = _get_default_embedding_function()
+        else:
+            self._embedding_function = None
 
     @property
     def collection_name(self) -> str:

@@ -77,7 +77,10 @@ chonkie = [
 ]
 
 # Vector stores
-chroma = ["chromadb>=0.4"]
+chroma = [
+    "chromadb>=0.4",
+    "sentence-transformers>=2.2",  # For default embeddings
+]
 qdrant = ["qdrant-client>=1.7"]
 pinecone = ["pinecone-client>=3.0"]
 weaviate = ["weaviate-client>=4.0"]
@@ -113,10 +116,10 @@ dev = [
 gweta = "gweta.cli.main:app"
 
 [project.urls]
-Homepage = "https://github.com/gweta/gweta"
-Documentation = "https://gweta.readthedocs.io"
-Repository = "https://github.com/gweta/gweta"
-Issues = "https://github.com/gweta/gweta/issues"
+Homepage = "https://github.com/tinomupezeni/gweta"
+Documentation = "https://tinomupezeni.github.io/gweta/"
+Repository = "https://github.com/tinomupezeni/gweta"
+Issues = "https://github.com/tinomupezeni/gweta/issues"
 
 [tool.hatch.version]
 path = "src/gweta/_version.py"

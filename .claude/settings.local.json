@@ -11,7 +11,11 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nComplete Gweta RAG data quality framework - Phases 1-5\n\nPhase 1 - Core Foundation:\n- Chunk dataclass and QualityReport types\n- ChunkValidator with density and coherence scoring\n- ChromaStore vector store adapter\n- CLI with validate, crawl, ingest, health, serve commands\n\nPhase 2 - Acquisition Layer:\n- GwetaCrawler wrapping Crawl4AI\n- PDFExtractor with table extraction\n- DatabaseSource with SQL safety\n- APIClient for REST endpoints\n- Sitemap and RSS fetchers\n\nPhase 3 - MCP Server:\n- FastMCP-based server with stdio/HTTP transports\n- 10 MCP tools for AI agent integration\n- 4 MCP resources and 3 prompts\n\nPhase 4 - Intelligence Layer:\n- DomainRuleEngine with YAML-based validation rules\n- GoldenDatasetRunner for retrieval quality testing\n- Qdrant, Pinecone, Weaviate store adapters\n- Comprehensive test suite \\(163 tests\\)\n\nPhase 5 - Polish & Launch:\n- Documentation \\(getting-started, architecture, API reference\\)\n- Full pipeline example\n- CHANGELOG for version tracking\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git branch:*)",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(gh run list:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(mkdocs build:*)"
     ]
   }
 }

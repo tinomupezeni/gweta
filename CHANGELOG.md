@@ -5,6 +5,23 @@ All notable changes to Gweta will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-02-06
+
+### Fixed
+
+- **ChromaStore default embeddings**: ChromaStore now automatically uses
+  SentenceTransformer `all-MiniLM-L6-v2` embeddings by default. Previously,
+  users had to manually provide an embedding function.
+- Added `sentence-transformers` to `gweta[chroma]` dependencies
+- Added `use_default_embeddings` parameter to ChromaStore
+- Improved ChromaStore documentation with embedding configuration examples
+
+### Changed
+
+- Updated project URLs to point to correct GitHub repository
+
+---
+
 ## [0.1.0] - 2025-02-06
 
 ### Added
