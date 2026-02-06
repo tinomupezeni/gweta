@@ -1,0 +1,106 @@
+# Simuka Career Platform - System Intent
+#
+# This file defines what the Simuka platform is meant to do.
+# Gweta uses this to filter content for relevance.
+#
+# Usage:
+#   from gweta.intelligence import Pipeline
+#   pipeline = Pipeline(intent="intents/simuka.yaml", store=my_store)
+
+system:
+  name: "Simuka Career Platform"
+
+  description: |
+    AI-powered career activation platform helping Zimbabwean university
+    graduates transition from education to employment or entrepreneurship.
+    Provides practical, actionable guidance with local context for IT,
+    Commerce, Agriculture, Education, Engineering, and Health sectors.
+
+  target_users:
+    - Recent university graduates in Zimbabwe
+    - Final year students preparing for job market
+    - Young entrepreneurs starting their first business
+    - Professionals seeking to transition careers
+
+  # Core questions the system should answer well
+  # These heavily influence relevance scoring
+  core_questions:
+    - "How do I register a business in Zimbabwe?"
+    - "What freelance services can I offer with my degree?"
+    - "How much capital do I need to start a small business?"
+    - "Where can I find my first clients?"
+    - "What are ZIMRA requirements for small business?"
+    - "How do I price my services competitively?"
+    - "What sectors are growing in Zimbabwe?"
+    - "How do I accept payments via EcoCash?"
+    - "What incubators and funding are available?"
+    - "How do I build a portfolio as a new graduate?"
+
+  # Topics that indicate relevant content
+  relevant_topics:
+    - Zimbabwe business registration
+    - Private Business Corporation (PBC)
+    - ZIMRA tax requirements
+    - Company registry procedures
+    - EcoCash merchant integration
+    - Freelancing in Africa
+    - Startup funding Zimbabwe
+    - Career paths by degree
+    - IT services and consulting
+    - Accounting and bookkeeping services
+    - Agricultural value addition
+    - Export procedures Zimbabwe
+    - Impact Hub Harare
+    - Tech Hub Zimbabwe
+    - Entrepreneurship guides
+    - Small business pricing
+    - Client acquisition strategies
+    - Portfolio building
+    - University to work transition
+    - Informal sector opportunities
+
+  # Topics to explicitly reject
+  irrelevant_topics:
+    - US business regulations
+    - EU tax law
+    - UK company formation
+    - Cryptocurrency trading
+    - Forex trading
+    - Multi-level marketing
+    - Get rich quick schemes
+    - Large enterprise solutions
+    - Corporate restructuring
+    - Academic research papers
+    - Historical content before 2020
+
+  geographic_focus:
+    primary: Zimbabwe
+    secondary:
+      - Southern Africa
+      - East Africa
+      - Sub-Saharan Africa
+
+  quality_requirements:
+    # Minimum score to automatically accept
+    min_relevance_score: 0.6
+
+    # Score below which to reject outright
+    review_threshold: 0.4
+
+    # Reject content older than this date
+    freshness_cutoff: "2022-01-01"
+
+    # Prefer government and official sources
+    prefer_official_sources: true
+
+  # Custom metadata
+  metadata:
+    version: "1.0"
+    created: "2025-02-06"
+    sectors:
+      - IT
+      - Commerce
+      - Agriculture
+      - Education
+      - Engineering
+      - Health

@@ -1,13 +1,12 @@
-"""Gweta - RAG data quality and ingestion framework.
+"""Gweta - Intelligent RAG data curation engine.
 
-Acquire. Validate. Ingest.
+Acquire. Validate. Curate. Ingest.
 
-Gweta provides a comprehensive pipeline for quality-aware data ingestion
-into vector stores for RAG applications. It handles the full lifecycle:
-acquisition from various sources, multi-stage validation, and ingestion
-with quality tracking.
+Gweta provides intent-aware data curation for RAG applications.
+It understands your system's purpose and ensures every chunk in
+your knowledge base serves that purpose.
 
-Example:
+Example (Simple):
     >>> from gweta import Chunk, ChunkValidator, ChromaStore
     >>>
     >>> # Validate chunks
@@ -17,6 +16,19 @@ Example:
     >>> # Ingest validated chunks
     >>> store = ChromaStore(collection_name="my-kb")
     >>> await store.add(report.accepted())
+
+Example (Intent-Aware):
+    >>> from gweta.intelligence import Pipeline
+    >>>
+    >>> # Create intent-aware pipeline
+    >>> pipeline = Pipeline(
+    ...     intent="my_system_intent.yaml",
+    ...     store=ChromaStore("my-kb")
+    ... )
+    >>>
+    >>> # Ingest with relevance filtering
+    >>> result = await pipeline.ingest(chunks)
+    >>> print(f"Ingested {result.ingested} relevant chunks")
 """
 
 from gweta._version import __version__
@@ -76,6 +88,10 @@ __all__ = [
     # Ingestion (lazy)
     "ChromaStore",
     "IngestionPipeline",
+    # Intelligence (lazy)
+    "SystemIntent",
+    "RelevanceFilter",
+    "Pipeline",
     # Adapters (lazy)
     "LangChainAdapter",
     "LlamaIndexAdapter",
@@ -136,5 +152,18 @@ def __getattr__(name: str):
     if name == "ChonkieAdapter":
         from gweta.adapters.chonkie import ChonkieAdapter
         return ChonkieAdapter
+
+    # Intelligence layer
+    if name == "SystemIntent":
+        from gweta.intelligence.intent import SystemIntent
+        return SystemIntent
+
+    if name == "RelevanceFilter":
+        from gweta.intelligence.relevance import RelevanceFilter
+        return RelevanceFilter
+
+    if name == "Pipeline":
+        from gweta.intelligence.pipeline import Pipeline
+        return Pipeline
 
     raise AttributeError(f"module 'gweta' has no attribute {name!r}")

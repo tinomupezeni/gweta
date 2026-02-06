@@ -76,6 +76,12 @@ chonkie = [
     "chonkie>=0.2",
 ]
 
+# Intelligence layer (intent-aware filtering)
+intelligence = [
+    "sentence-transformers>=2.2",
+    "numpy>=1.24",
+]
+
 # Vector stores
 chroma = [
     "chromadb>=0.4",
@@ -99,6 +105,7 @@ all = [
     "gweta[mcp]",
     "gweta[chonkie]",
     "gweta[stores]",
+    "gweta[intelligence]",
 ]
 
 # Development

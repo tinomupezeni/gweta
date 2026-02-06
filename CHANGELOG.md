@@ -5,6 +5,64 @@ All notable changes to Gweta will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-02-06
+
+### Added
+
+#### Intelligence Layer (Phase 1)
+Gweta now understands your system's purpose and filters content for relevance.
+
+- **SystemIntent**: Define what your RAG system is meant to do
+  - YAML-based configuration
+  - Core questions, relevant/irrelevant topics
+  - Geographic focus and quality thresholds
+
+- **EmbeddingEngine**: Wrapper for sentence-transformers
+  - Lazy loading for efficiency
+  - Multiple model options (fast, balanced, accurate)
+  - Batch processing support
+
+- **RelevanceFilter**: Score and filter chunks by intent
+  - Embedding-based semantic similarity
+  - Automatic rejection of irrelevant topics
+  - Accept/Review/Reject decisions with thresholds
+
+- **Pipeline**: Unified API for intent-aware ingestion
+  - Combines quality validation + relevance filtering
+  - Single entry point for full pipeline
+  - Detailed result reporting
+
+- New optional dependency: `gweta[intelligence]`
+
+### Example Usage
+
+```python
+from gweta.intelligence import Pipeline, SystemIntent
+from gweta import ChromaStore
+
+# Define your system's intent
+intent = SystemIntent(
+    name="Simuka Career Platform",
+    description="Career guidance for Zimbabwean graduates",
+    core_questions=[
+        "How do I register a business in Zimbabwe?",
+        "What freelance services can I offer?",
+    ],
+    relevant_topics=["Zimbabwe business", "ZIMRA", "entrepreneurship"],
+    irrelevant_topics=["US regulations", "cryptocurrency"],
+)
+
+# Create intent-aware pipeline
+pipeline = Pipeline(intent=intent, store=ChromaStore("my-kb"))
+
+# Ingest with automatic relevance filtering
+result = await pipeline.ingest(chunks)
+print(f"Ingested {result.ingested} relevant chunks")
+print(f"Rejected {result.rejected_count} irrelevant chunks")
+```
+
+---
+
 ## [0.1.1] - 2025-02-06
 
 ### Fixed
