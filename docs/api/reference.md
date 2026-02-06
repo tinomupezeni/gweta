@@ -432,7 +432,7 @@ class BaseStore(ABC):
 ### ChromaStore
 
 ```python
-from gweta import ChromaStore
+from gweta import ChromaStore, Chunk
 
 # Default: Uses SentenceTransformer "all-MiniLM-L6-v2" embeddings
 store = ChromaStore(collection_name="my_docs")
@@ -443,21 +443,31 @@ store = ChromaStore(
     persist_directory="./chroma_data",
 )
 
-# With custom embedding function
-from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
-embed_fn = SentenceTransformerEmbeddingFunction(model_name="all-mpnet-base-v2")
-store = ChromaStore(
-    collection_name="my_docs",
-    embedding_function=embed_fn,
-)
+# Add chunks (async)
+chunks = [Chunk(text="Content...", source="doc.pdf", metadata={"page": 1})]
+result = await store.add(chunks)
+print(f"Added: {result.added}")
 
-# With OpenAI embeddings
-from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
-embed_fn = OpenAIEmbeddingFunction(api_key="sk-...")
-store = ChromaStore(collection_name="my_docs", embedding_function=embed_fn)
+# Query (async) - IMPORTANT: use 'filter' not 'where'
+results = await store.query(
+    query="search text",      # Required
+    n_results=10,             # Optional, default 10
+    filter={"page": 1},       # Optional metadata filter
+)
+# Returns: list[Chunk]
+
+# Get stats (SYNC - no await!)
+stats = store.get_stats()
+print(f"Chunks: {stats.chunk_count}")
+
+# Get all chunks (async)
+all_chunks = await store.get_all()
+
+# Delete by IDs (async)
+deleted = await store.delete(["chunk-id-1", "chunk-id-2"])
 ```
 
-**Parameters:**
+**Constructor Parameters:**
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -466,6 +476,34 @@ store = ChromaStore(collection_name="my_docs", embedding_function=embed_fn)
 | `embedding_function` | `EmbeddingFunction` | `SentenceTransformer` | Custom embedding function |
 | `persist_directory` | `str` | `None` | Directory for persistence |
 | `use_default_embeddings` | `bool` | `True` | Use default embeddings if none provided |
+
+**Methods:**
+
+| Method | Signature | Returns | Async |
+|--------|-----------|---------|-------|
+| `add` | `(chunks: list[Chunk])` | `AddResult` | Yes |
+| `query` | `(query: str, n_results: int = 10, filter: dict = None)` | `list[Chunk]` | Yes |
+| `delete` | `(chunk_ids: list[str])` | `int` | Yes |
+| `get_all` | `()` | `list[Chunk]` | Yes |
+| `get_stats` | `()` | `StoreStats` | **No** |
+| `update` | `(chunk: Chunk)` | `bool` | Yes |
+| `search_by_metadata` | `(filter: dict, limit: int = 100)` | `list[Chunk]` | Yes |
+
+**Common Mistakes:**
+
+```python
+# WRONG - 'where' doesn't exist
+results = await store.query(query="text", where={"key": "value"})
+
+# CORRECT - use 'filter'
+results = await store.query(query="text", filter={"key": "value"})
+
+# WRONG - get_stats is sync
+stats = await store.get_stats()
+
+# CORRECT - no await
+stats = store.get_stats()
+```
 
 ### QdrantStore
 

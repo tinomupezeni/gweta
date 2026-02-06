@@ -1,0 +1,32 @@
+[
+    {
+        "text": "To register a Private Business Corporation (PBC) in Zimbabwe, you need to: 1) Reserve your company name at the Companies Registry for $20. 2) Prepare Form CR6 and company regulations. 3) Submit to the Registrar with $50-80 fee. 4) Receive certificate in 7-10 days. 5) Register with ZIMRA within 30 days for tax purposes.",
+        "source": "zimra-guide",
+        "category": "business-registration",
+        "pathway": "entrepreneurship"
+    },
+    {
+        "text": "EcoCash merchant registration is free and can be done at any Econet shop. You'll receive a merchant code for till payments. Transaction fees are 1-2%. Settlement to bank accounts takes 24-48 hours. EcoCash serves 6.7 million Zimbabweans.",
+        "source": "ecocash-guide",
+        "category": "payments",
+        "pathway": "entrepreneurship"
+    },
+    {
+        "text": "Freelance web developers in Zimbabwe can charge $200-500 for basic websites and $500-2000 for complex applications. Accept payments via EcoCash (merchant registration is free) or USD bank transfer. Join Impact Hub Harare and TechZim communities for networking.",
+        "source": "tech-guide",
+        "category": "freelancing",
+        "pathway": "IT"
+    },
+    {
+        "text": "Value addition opportunities for agriculture graduates include honey processing ($200-500 startup), dried fruit production ($300-800), and peanut butter manufacturing ($500-1500). Contact ZIMTRADE for export assistance and certification requirements.",
+        "source": "agri-guide",
+        "category": "agribusiness",
+        "pathway": "agriculture"
+    },
+    {
+        "text": "ZIMRA tax requirements for small businesses: Register within 30 days of starting operations. Quarterly VAT returns if turnover exceeds $40,000/year. Tax rate is 25% for companies, but small businesses can apply for reduced rates.",
+        "source": "zimra-guide",
+        "category": "taxes",
+        "pathway": "entrepreneurship"
+    }
+]

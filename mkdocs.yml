@@ -58,6 +58,7 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Guides:
+      - Integration Guide: guides/integration.md
       - Intelligence Layer: guides/intelligence.md
   - Concepts:
       - Architecture: concepts/architecture.md

@@ -121,6 +121,7 @@ Expose Gweta to AI agents like Claude Desktop:
 ## Documentation
 
 - [Getting Started](getting-started.md) - 5-minute quickstart
+- [Integration Guide](guides/integration.md) - **Exact API signatures and working examples**
 - [Intelligence Layer](guides/intelligence.md) - Intent-aware filtering guide
 - [Architecture](concepts/architecture.md) - How Gweta works
 - [API Reference](api/reference.md) - Full API documentation

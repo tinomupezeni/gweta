@@ -275,6 +275,7 @@ Then Claude can use tools like:
 
 ## Next Steps
 
+- [Integration Guide](guides/integration.md) - **Start here** - Exact API signatures and common mistakes
 - [Intelligence Layer Guide](guides/intelligence.md) - Deep dive into intent-aware filtering
 - [Architecture Overview](concepts/architecture.md) - Understand how Gweta works
 - [API Reference](api/reference.md) - Full API documentation
