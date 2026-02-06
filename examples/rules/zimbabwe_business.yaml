@@ -1,0 +1,156 @@
+# Zimbabwe Business Domain Rules
+# This file defines validation rules for Zimbabwe business documents
+
+rules:
+  # Currency and Financial Rules
+  - name: currency_format
+    description: Validate currency values use standard format
+    type: regex
+    pattern: "(USD|ZWL|\\$)\\s?\\d+([,.]\\d{2,3})?"
+    field: required
+    severity: warning
+    message: Currency values should use USD or ZWL with proper formatting
+    enabled: true
+
+  - name: company_registration
+    description: Check for Zimbabwe company registration number
+    type: regex
+    pattern: "\\b[A-Z]{2}\\d{4,8}\\b"
+    field: required
+    severity: error
+    message: Document should include company registration number (e.g., ZW123456)
+    enabled: true
+
+  - name: tax_clearance
+    description: Tax clearance certificate reference
+    type: regex
+    pattern: "TCZ-\\d{4}-\\d{6}"
+    severity: info
+    message: Tax clearance number format validation
+    enabled: true
+
+  # Contact Information Rules
+  - name: phone_format
+    description: Zimbabwe phone number format
+    type: regex
+    pattern: "(\\+263|0)(7[1-8])\\d{7}"
+    severity: warning
+    message: Phone numbers should use Zimbabwe format (+263 or 07x)
+    enabled: true
+
+  - name: email_validation
+    description: Valid email address format
+    type: regex
+    pattern: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+    severity: info
+    message: Check email format
+    enabled: true
+
+  # Numerical Range Rules
+  - name: price_range
+    description: Validate prices are within reasonable range
+    type: numerical_range
+    condition:
+      min: 0.01
+      max: 100000000
+    severity: warning
+    message: Price ${value} seems outside normal range
+    enabled: true
+
+  - name: year_range
+    description: Year references should be reasonable
+    type: numerical_range
+    condition:
+      min: 1980
+      max: 2030
+    severity: warning
+    message: Year ${value} appears incorrect
+    enabled: true
+
+  - name: vat_percentage
+    description: VAT percentage validation (should be 15%)
+    type: numerical_range
+    field: vat_rate
+    condition:
+      min: 14
+      max: 16
+    severity: error
+    message: VAT rate should be 15%
+    enabled: true
+
+  # Required Fields
+  - name: document_date
+    description: All documents must be dated
+    type: required_field
+    field: date
+    severity: warning
+    message: Document is missing date metadata
+    enabled: true
+
+  - name: author_attribution
+    description: Documents should have author
+    type: required_field
+    field: author
+    severity: info
+    message: Author attribution recommended
+    enabled: true
+
+known_facts:
+  # Economic Facts
+  - key: minimum_wage
+    value: 350
+    source: Zimbabwe Labour Act 2024
+    verified_date: "2024-01-01"
+    tolerance: 20
+    unit: USD
+
+  - key: vat_rate
+    value: 15
+    source: ZIMRA Tax Guidelines
+    verified_date: "2024-01-01"
+    tolerance: 0
+    unit: "%"
+
+  - key: company_tax_rate
+    value: 25
+    source: ZIMRA Corporate Tax Guidelines
+    verified_date: "2024-01-01"
+    tolerance: 0
+    unit: "%"
+
+  - key: withholding_tax
+    value: 10
+    source: ZIMRA Withholding Tax
+    verified_date: "2024-01-01"
+    tolerance: 0
+    unit: "%"
+
+  # Banking Facts
+  - key: reserve_bank_rate
+    value: 130
+    source: Reserve Bank of Zimbabwe
+    verified_date: "2024-06-01"
+    tolerance: 5
+    unit: "%"
+
+  - key: interbank_rate
+    value: 13500
+    source: RBZ Interbank Market
+    verified_date: "2024-06-01"
+    tolerance: 500
+    unit: ZWL/USD
+
+  # Compliance Facts
+  - key: zimra_registration_fee
+    value: 50
+    source: ZIMRA Registration Guidelines
+    verified_date: "2024-01-01"
+    tolerance: 0
+    unit: USD
+
+  - key: annual_return_fee
+    value: 30
+    source: Companies Registry
+    verified_date: "2024-01-01"
+    tolerance: 0
+    unit: USD

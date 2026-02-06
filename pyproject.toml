@@ -1,0 +1,164 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gweta"
+dynamic = ["version"]
+description = "RAG data quality and ingestion framework - Acquire, Validate, Ingest"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Gweta Contributors" }
+]
+keywords = [
+    "rag",
+    "llm",
+    "data-quality",
+    "vector-database",
+    "knowledge-base",
+    "mcp",
+    "crawling",
+    "validation",
+    "ingestion",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Indexing",
+]
+
+dependencies = [
+    # Core
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "httpx>=0.25",
+    "typer>=0.9",
+    "rich>=13.0",
+    "anyio>=4.0",
+
+    # Crawling (core, not optional)
+    "crawl4ai>=0.3",
+    "beautifulsoup4>=4.12",
+
+    # PDF
+    "pdfplumber>=0.10",
+
+    # Validation
+    "datasketch>=1.6",
+    "langdetect>=1.0",
+    "chardet>=5.0",
+]
+
+[project.optional-dependencies]
+# Database connectivity
+db = [
+    "sqlalchemy>=2.0",
+    "asyncpg>=0.29",
+    "aiomysql>=0.2",
+    "aiosqlite>=0.19",
+]
+
+# MCP server
+mcp = [
+    "mcp>=1.0",
+]
+
+# Advanced chunking
+chonkie = [
+    "chonkie>=0.2",
+]
+
+# Vector stores
+chroma = ["chromadb>=0.4"]
+qdrant = ["qdrant-client>=1.7"]
+pinecone = ["pinecone-client>=3.0"]
+weaviate = ["weaviate-client>=4.0"]
+
+# All vector stores
+stores = [
+    "gweta[chroma]",
+    "gweta[qdrant]",
+    "gweta[pinecone]",
+    "gweta[weaviate]",
+]
+
+# Everything
+all = [
+    "gweta[db]",
+    "gweta[mcp]",
+    "gweta[chonkie]",
+    "gweta[stores]",
+]
+
+# Development
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "pytest-cov>=4.0",
+    "mypy>=1.0",
+    "ruff>=0.1",
+    "bandit>=1.7",
+    "pre-commit>=3.0",
+]
+
+[project.scripts]
+gweta = "gweta.cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/gweta/gweta"
+Documentation = "https://gweta.readthedocs.io"
+Repository = "https://github.com/gweta/gweta"
+Issues = "https://github.com/gweta/gweta/issues"
+
+[tool.hatch.version]
+path = "src/gweta/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gweta"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+ignore_missing_imports = true
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM", "ARG", "PTH"]
+ignore = ["E501"]
+
+[tool.ruff.isort]
+known-first-party = ["gweta"]
+
+[tool.ruff.per-file-ignores]
+"tests/*" = ["ARG"]
+
+[tool.coverage.run]
+source = ["src/gweta"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]

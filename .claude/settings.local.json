@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if not exist \"C:\\\\Users\\\\Dell\\\\Documents\\\\projects\\\\gweta\\\\.github\\\\workflows\" mkdir \"C:\\\\Users\\\\Dell\\\\Documents\\\\projects\\\\gweta\\\\.github\\\\workflows\")",
+      "Bash(pip install:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
