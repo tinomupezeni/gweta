@@ -3,8 +3,9 @@
 [![PyPI version](https://badge.fury.io/py/gweta.svg)](https://badge.fury.io/py/gweta)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://github.com/yourusername/gweta/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/gweta/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/yourusername/gweta/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/gweta)
+[![Tests](https://github.com/tinomupezeni/gweta/actions/workflows/ci.yml/badge.svg)](https://github.com/tinomupezeni/gweta/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/tinomupezeni/gweta/branch/main/graph/badge.svg)](https://codecov.io/gh/tinomupezeni/gweta)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://tinomupezeni.github.io/gweta/)
 
 **Acquire. Validate. Ingest.**
 
@@ -264,7 +265,7 @@ known_facts:
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/gweta.git
+git clone https://github.com/tinomupezeni/gweta.git
 cd gweta
 
 # Install in development mode

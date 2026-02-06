@@ -1,0 +1,72 @@
+site_name: Gweta
+site_description: RAG Data Quality & Ingestion Framework
+site_author: Tino Mupezeni
+site_url: https://tinomupezeni.github.io/gweta/
+
+repo_name: tinomupezeni/gweta
+repo_url: https://github.com/tinomupezeni/gweta
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Concepts:
+      - Architecture: concepts/architecture.md
+  - API Reference: api/reference.md
+  - Examples:
+      - Full Pipeline: examples/full-pipeline.md
+  - Changelog: changelog.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/tinomupezeni/gweta
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/gweta/
