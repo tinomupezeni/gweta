@@ -1,0 +1,359 @@
+# Zimbabwe Career Activation Platform - Domain Rules
+# Use with: DomainRuleEngine.from_yaml("rules/zimbabwe_career.yaml")
+
+name: zimbabwe-career-platform
+version: "1.0"
+description: Domain rules for validating Zimbabwe career and business content
+
+rules:
+  # ===== CURRENCY VALIDATION =====
+  - id: usd-price-range
+    name: USD Price Reasonability
+    description: USD prices should be within reasonable Zimbabwe ranges
+    rule_type: regex
+    pattern: '\$\s*(\d{1,6})(?:\.\d{2})?'
+    action: validate
+    severity: warning
+    message: "USD amount detected - verify reasonability for Zimbabwe market"
+
+  - id: zig-currency-format
+    name: ZiG Currency Format
+    description: Zimbabwe Gold (ZiG) should use correct format
+    rule_type: regex
+    pattern: 'ZiG\s*\d+|ZWG\s*\d+'
+    action: validate
+    severity: info
+    message: "ZiG currency reference detected"
+
+  # ===== BUSINESS REGISTRATION =====
+  - id: pbc-registration-cost
+    name: PBC Registration Cost
+    description: Private Business Corporation costs should be current
+    rule_type: numerical_range
+    field: pbc_cost_usd
+    condition:
+      min: 50
+      max: 200
+    severity: warning
+    message: "PBC registration cost outside expected range ($70-100 typical)"
+
+  - id: company-registration-number
+    name: Company Registration Format
+    description: Zimbabwe company registration number format
+    rule_type: regex
+    pattern: '\b\d{1,6}/\d{2,4}\b'
+    action: validate
+    severity: info
+    message: "Company registration number format detected"
+
+  - id: zimra-bp-number
+    name: ZIMRA BP Number Format
+    description: Business Partner number from ZIMRA
+    rule_type: regex
+    pattern: '\bBP\d{9,10}\b'
+    action: validate
+    severity: info
+    message: "ZIMRA BP number format detected"
+
+  # ===== CONTACT VALIDATION =====
+  - id: zw-phone-format
+    name: Zimbabwe Phone Format
+    description: Validate Zimbabwe phone number formats
+    rule_type: regex
+    pattern: '(\+263|0)(7[1-8])\d{7}'
+    action: validate
+    severity: info
+    message: "Zimbabwe mobile number format detected"
+
+  - id: econet-number
+    name: Econet Number Detection
+    description: Econet numbers (largest network)
+    rule_type: regex
+    pattern: '(\+263|0)(77|78)\d{7}'
+    action: validate
+    severity: info
+    message: "Econet number detected - EcoCash likely available"
+
+  # ===== CONTENT QUALITY =====
+  - id: outdated-content
+    name: Outdated Information Detection
+    description: Flag content with old dates
+    rule_type: regex
+    pattern: '\b(201[0-9]|202[0-3])\b'
+    action: warn
+    severity: warning
+    message: "Potentially outdated year reference - verify currency"
+
+  - id: requires-source
+    name: Source Attribution Required
+    description: All regulatory content must have source
+    rule_type: required_field
+    field: source
+    severity: error
+    message: "Missing source attribution"
+
+  - id: requires-sector
+    name: Sector Classification Required
+    description: Career content must be sector-tagged
+    rule_type: required_field
+    field: sector
+    severity: warning
+    message: "Missing sector classification"
+
+  - id: requires-region
+    name: Region Tag Recommended
+    description: Location-specific content should have region
+    rule_type: required_field
+    field: region
+    severity: info
+    message: "Consider adding region tag for location-specific content"
+
+  # ===== ENTREPRENEURSHIP VALIDATION =====
+  - id: startup-cost-range
+    name: Realistic Startup Costs
+    description: Startup costs should be realistic for Zimbabwe
+    rule_type: numerical_range
+    field: startup_cost_usd
+    condition:
+      min: 10
+      max: 10000
+    severity: warning
+    message: "Startup cost outside typical Zimbabwe range ($50-$5000 for micro-enterprises)"
+
+  - id: no-unrealistic-promises
+    name: No Unrealistic Income Promises
+    description: Flag get-rich-quick language
+    rule_type: regex
+    pattern: '(guaranteed income|get rich|easy money|passive income \$\d{4,})'
+    action: reject
+    severity: error
+    message: "Unrealistic income claims detected - reject for quality"
+
+  # ===== SECTOR-SPECIFIC =====
+  - id: it-sector-skills
+    name: IT Sector Skill Keywords
+    description: Validate IT content has relevant skills
+    rule_type: regex
+    pattern: '(Python|JavaScript|React|Node|database|API|mobile app|web development)'
+    action: validate
+    severity: info
+    message: "IT sector skill reference detected"
+
+  - id: agri-sector-keywords
+    name: Agriculture Sector Keywords
+    description: Validate agriculture content relevance
+    rule_type: regex
+    pattern: '(farming|crops|livestock|irrigation|value.?addition|export|horticulture)'
+    action: validate
+    severity: info
+    message: "Agriculture sector reference detected"
+
+  - id: commerce-sector-keywords
+    name: Commerce/Business Sector Keywords
+    description: Validate business content relevance
+    rule_type: regex
+    pattern: '(accounting|bookkeeping|tax|ZIMRA|audit|financial|consulting|SME)'
+    action: validate
+    severity: info
+    message: "Commerce/business sector reference detected"
+
+# ===== KNOWN FACTS =====
+# These are verified facts the AI can cross-reference
+known_facts:
+  # Business Registration
+  - key: pbc_registration_cost
+    value: "70-100"
+    unit: USD
+    source: "Companies and Deeds Registry 2024"
+    verified_date: "2024-01-01"
+    description: "Private Business Corporation registration cost"
+
+  - key: pbc_registration_time
+    value: "7-10"
+    unit: "working days"
+    source: "Companies and Deeds Registry 2024"
+    verified_date: "2024-01-01"
+    description: "PBC registration processing time"
+
+  - key: zimra_registration_deadline
+    value: "30"
+    unit: "days"
+    source: "ZIMRA 2024"
+    verified_date: "2024-01-01"
+    description: "Days after incorporation to register with ZIMRA"
+
+  # Tax Rates
+  - key: vat_rate
+    value: "15"
+    unit: "percent"
+    source: "ZIMRA 2024"
+    verified_date: "2024-01-01"
+    description: "Standard VAT rate in Zimbabwe"
+
+  - key: corporate_tax_rate
+    value: "24.72"
+    unit: "percent"
+    source: "ZIMRA 2024"
+    verified_date: "2024-01-01"
+    description: "Corporate income tax rate"
+
+  # Market Data
+  - key: econet_market_share
+    value: "72"
+    unit: "percent"
+    source: "POTRAZ Q4 2024"
+    verified_date: "2024-12-01"
+    description: "Econet mobile network market share"
+
+  - key: ecocash_users
+    value: "6700000"
+    unit: "users"
+    source: "Econet 2024"
+    verified_date: "2024-01-01"
+    description: "EcoCash registered users"
+
+  - key: mobile_penetration
+    value: "102"
+    unit: "percent"
+    source: "POTRAZ Q4 2024"
+    verified_date: "2024-12-01"
+    description: "Mobile subscription penetration rate"
+
+  - key: internet_mobile_usage
+    value: "81"
+    unit: "percent"
+    source: "POTRAZ 2024"
+    verified_date: "2024-01-01"
+    description: "Percentage of internet access via mobile"
+
+  # Employment Data
+  - key: unemployment_rate
+    value: "21.8"
+    unit: "percent"
+    source: "ZIMSTAT Q3 2024"
+    verified_date: "2024-09-01"
+    description: "Official unemployment rate"
+
+  - key: informal_sector_share
+    value: "80"
+    unit: "percent"
+    source: "World Bank 2024"
+    verified_date: "2024-01-01"
+    description: "Share of jobs in informal sector"
+
+  - key: youth_unemployment
+    value: "35"
+    unit: "percent"
+    source: "UNICEF 2024"
+    verified_date: "2024-01-01"
+    description: "Youth unemployment rate"
+
+  # University Data
+  - key: uz_graduates_2024
+    value: "6918"
+    unit: "graduates"
+    source: "University of Zimbabwe 2024"
+    verified_date: "2024-12-01"
+    description: "UZ graduation class size 2024"
+
+  - key: uz_female_graduates
+    value: "53"
+    unit: "percent"
+    source: "University of Zimbabwe 2024"
+    verified_date: "2024-12-01"
+    description: "Female percentage of UZ graduates"
+
+# ===== SOURCE AUTHORITY LEVELS =====
+# Define trusted sources and their authority scores
+source_authority:
+  - domain: "zimra.co.zw"
+    name: "ZIMRA Official"
+    authority_score: 1.0
+    refresh_days: 30
+    tags: [tax, registration, official]
+
+  - domain: "companies.gov.zw"
+    name: "Companies Registry"
+    authority_score: 1.0
+    refresh_days: 30
+    tags: [registration, official]
+
+  - domain: "zimstat.co.zw"
+    name: "ZIMSTAT"
+    authority_score: 1.0
+    refresh_days: 90
+    tags: [statistics, official]
+
+  - domain: "rbz.co.zw"
+    name: "Reserve Bank of Zimbabwe"
+    authority_score: 1.0
+    refresh_days: 7
+    tags: [finance, currency, official]
+
+  - domain: "uz.ac.zw"
+    name: "University of Zimbabwe"
+    authority_score: 0.95
+    refresh_days: 180
+    tags: [education, university]
+
+  - domain: "potraz.gov.zw"
+    name: "POTRAZ"
+    authority_score: 1.0
+    refresh_days: 90
+    tags: [telecom, statistics, official]
+
+  - domain: "econet.co.zw"
+    name: "Econet Wireless"
+    authority_score: 0.9
+    refresh_days: 30
+    tags: [telecom, ecocash]
+
+  - domain: "techzim.co.zw"
+    name: "TechZim"
+    authority_score: 0.7
+    refresh_days: 7
+    tags: [tech, news, market]
+
+  - domain: "chronicle.co.zw"
+    name: "The Chronicle"
+    authority_score: 0.6
+    refresh_days: 1
+    tags: [news]
+
+  - domain: "newsday.co.zw"
+    name: "NewsDay"
+    authority_score: 0.6
+    refresh_days: 1
+    tags: [news]
+
+# ===== SECTOR DEFINITIONS =====
+sectors:
+  - id: it
+    name: "Information Technology"
+    keywords: [software, programming, web, mobile, data, cloud, IT, tech]
+    pathways: [employment, freelance, startup]
+
+  - id: commerce
+    name: "Business/Commerce/Accounting"
+    keywords: [accounting, bookkeeping, finance, tax, audit, consulting, business]
+    pathways: [employment, freelance, startup]
+
+  - id: agriculture
+    name: "Agriculture/Agribusiness"
+    keywords: [farming, crops, livestock, horticulture, export, agri, food]
+    pathways: [employment, agripreneur, cooperative]
+
+  - id: education
+    name: "Education"
+    keywords: [teaching, tutoring, training, curriculum, school, education]
+    pathways: [employment, tutoring, edtech]
+
+  - id: engineering
+    name: "Engineering"
+    keywords: [engineering, mechanical, electrical, civil, construction]
+    pathways: [employment, consulting, contracting]
+
+  - id: health
+    name: "Health Sciences"
+    keywords: [health, medical, nursing, pharmacy, clinical, healthcare]
+    pathways: [employment, private_practice, telehealth]
