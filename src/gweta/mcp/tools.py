@@ -410,4 +410,82 @@ def register_tools(mcp: Any) -> None:
             ],
         }
 
+    @mcp.tool()
+    async def intelligent_scout(
+        goal: str,
+        max_pages: int = 5,
+        model: str = "gpt-4o-mini",
+        target_collection: str | None = None,
+    ) -> dict[str, Any]:
+        """Perform goal-driven web discovery, navigation, and extraction
+        using AI. This tool will generate search queries, find relevant
+        URLs, and extract content based on your natural language goal.
+
+        Args:
+            goal: Natural language description of what you want to find.
+            max_pages: Maximum number of pages to visit.
+            model: LLM model to use for intelligence.
+            target_collection: Optional collection to ingest to.
+        """
+        from gweta.intelligence.scout import IntelligenceScout
+
+        scout = IntelligenceScout(model=model)
+        result = await scout.scout(goal=goal, max_pages=max_pages)
+
+        # Optionally ingest to collection
+        if target_collection and result.raw_chunks:
+            from gweta.ingest.stores.chroma import ChromaStore
+            store = ChromaStore(collection_name=target_collection)
+            await store.add(result.raw_chunks)
+
+        return {
+            "goal": goal,
+            "queries": result.queries,
+            "urls_discovered": result.urls_discovered,
+            "pages_visited": result.pages_visited,
+            "chunks_extracted": result.chunks_extracted,
+            "extracted_data": result.extracted_data,
+            "ingested_to": target_collection,
+        }
+
+    @mcp.tool()
+    async def smart_extract(
+        url: str,
+        goal: str,
+        schema: dict[str, Any] | None = None,
+        model: str = "gpt-4o-mini",
+    ) -> dict[str, Any]:
+        """Extract structured data from a specific URL based on a goal
+        and optional JSON schema using LLM intelligence.
+
+        Args:
+            url: The URL to extract data from.
+            goal: Description of what data to extract.
+            schema: Optional JSON schema for the output.
+            model: LLM model to use.
+        """
+        from gweta.acquire.crawler import GwetaCrawler
+        from gweta.intelligence.llm import LLMClient
+
+        crawler = GwetaCrawler()
+        page_result = await crawler.crawl(url, depth=1)
+
+        if not page_result.chunks:
+            return {"error": "No content extracted from URL"}
+
+        llm = LLMClient(model=model)
+        combined_text = "\n\n".join(c.text for c in page_result.chunks[:10])
+
+        extracted = await llm.extract_json(
+            text=combined_text,
+            goal=goal,
+            schema=schema
+        )
+
+        return {
+            "url": url,
+            "goal": goal,
+            "extracted_data": extracted,
+        }
+
     logger.info("Registered MCP tools")

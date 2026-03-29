@@ -1,31 +1,22 @@
 """Gweta Intelligence Layer.
 
-This module provides intent-aware relevance filtering for RAG systems.
-It uses embedding-based semantic similarity to score content against
-a system's defined purpose.
+This module provides intent-aware relevance filtering and AI-driven
+data acquisition for RAG systems.
+
+Components:
+- SystemIntent: Define the purpose and goal of your RAG system.
+- RelevanceFilter: Semantic filtering using embedding similarity.
+- IntelligenceScout: Goal-driven web discovery, navigation, and extraction.
+- Pipeline: Unified ingestion pipeline combining quality and relevance.
 
 Example:
-    >>> from gweta.intelligence import SystemIntent, RelevanceFilter
+    >>> from gweta.intelligence import IntelligenceScout
     >>>
-    >>> # Load system intent
-    >>> intent = SystemIntent.from_yaml("simuka_intent.yaml")
-    >>>
-    >>> # Create filter
-    >>> filter = RelevanceFilter(intent)
-    >>>
-    >>> # Score chunks for relevance
-    >>> results = filter.filter_batch(chunks)
-    >>> relevant_chunks = results.accepted()
-
-Or use the unified Pipeline:
-
-    >>> from gweta.intelligence import Pipeline
-    >>>
-    >>> pipeline = Pipeline(
-    ...     intent="simuka_intent.yaml",
-    ...     store=ChromaStore("my_kb")
+    >>> scout = IntelligenceScout(model="gpt-4o")
+    >>> result = await scout.scout(
+    ...     goal="Find business registration fees in Zimbabwe",
+    ...     max_pages=3
     ... )
-    >>> result = await pipeline.ingest(chunks)
 """
 
 from gweta.intelligence.intent import SystemIntent, QualityRequirements, GeographicFocus
@@ -37,6 +28,8 @@ from gweta.intelligence.relevance import (
     RelevanceDecision,
 )
 from gweta.intelligence.pipeline import Pipeline, PipelineResult
+from gweta.intelligence.llm import LLMClient
+from gweta.intelligence.scout import IntelligenceScout, ScoutResult
 
 __all__ = [
     # Intent
@@ -53,4 +46,8 @@ __all__ = [
     # Pipeline
     "Pipeline",
     "PipelineResult",
+    # LLM & Scouting
+    "LLMClient",
+    "IntelligenceScout",
+    "ScoutResult",
 ]

@@ -76,10 +76,12 @@ chonkie = [
     "chonkie>=0.2",
 ]
 
-# Intelligence layer (intent-aware filtering)
+# Intelligence layer (intent-aware filtering and scouting)
 intelligence = [
     "sentence-transformers>=2.2",
     "numpy>=1.24",
+    "litellm>=1.0",
+    "duckduckgo-search>=4.0",
 ]
 
 # Vector stores

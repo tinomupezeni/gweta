@@ -13,6 +13,8 @@ Gweta is a RAG data quality and ingestion framework that handles the full data l
 
 ## Features
 
+- **AI-Driven Discovery**: Natural language goal-driven scouting (scrapes the web for you)
+- **Smart Extraction**: Extract structured JSON from messy web pages using LLMs
 - **Multi-Source Acquisition**: Web crawling (Crawl4AI), PDF extraction, REST/GraphQL APIs, databases
 - **4-Stage Validation Pipeline**:
   - Extraction quality (encoding, completeness, structure)
@@ -20,7 +22,7 @@ Gweta is a RAG data quality and ingestion framework that handles the full data l
   - Domain rules (custom YAML-based validation, known facts)
   - Knowledge base health (coverage, staleness, retrieval quality)
 - **Vector Store Integration**: Chroma, Qdrant, Pinecone, Weaviate
-- **MCP Server**: Expose all capabilities to AI agents via Model Context Protocol
+- **MCP Server**: Expose all capabilities (including AI scouting) to AI agents via Model Context Protocol
 - **Framework Adapters**: LangChain, LlamaIndex, Chonkie integration
 
 ## Installation
