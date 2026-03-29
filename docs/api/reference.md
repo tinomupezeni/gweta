@@ -247,6 +247,76 @@ Result from pipeline ingestion.
 | `acceptance_rate` | `float` | Ingested / total |
 | `relevance_report` | `RelevanceReport` | Full relevance report |
 
+### IntelligenceScout
+
+AI-powered scout for goal-driven web discovery and extraction.
+
+```python
+from gweta.intelligence import IntelligenceScout
+
+scout = IntelligenceScout(
+    model="gpt-4o",
+    api_key="optional-key",
+)
+
+# Run full scouting operation
+result = await scout.scout(
+    goal="Find pricing for product X",
+    max_pages=5,
+    extract_schema={"type": "object", "properties": {"price": {"type": "string"}}}
+)
+```
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `scout(goal, **kwargs)` | `ScoutResult` | Goal-driven scouting operation |
+| `generate_search_queries(goal, count)` | `list[str]` | LLM-powered query generation |
+| `discover_urls(queries, limit)` | `list[str]` | Find URLs via search |
+| `rank_links(links, goal, limit)` | `list[str]` | Rank links by relevance to goal |
+
+### ScoutResult
+
+Result from a scouting operation.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `goal` | `str` | The original goal |
+| `queries` | `list[str]` | Generated search queries |
+| `urls_discovered` | `list[str]` | Discovered URLs |
+| `pages_visited` | `int` | Number of pages crawled |
+| `chunks_extracted` | `int` | Number of chunks created |
+| `extracted_data` | `list[dict]` | Structured data from LLM extraction |
+
+### LLMClient
+
+Unified wrapper for 100+ LLM providers.
+
+```python
+from gweta.intelligence import LLMClient
+
+client = LLMClient(model="gpt-4o", api_key="...")
+
+# Get raw completion
+response = await client.ask("Hello, LLM!")
+
+# Extract structured JSON
+data = await client.extract_json(
+    text="Price is $100",
+    goal="Find the price",
+    schema={"type": "object", "properties": {"price": {"type": "integer"}}}
+)
+```
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `ask(prompt, system_prompt)` | `str` | Simple completion |
+| `extract_json(text, goal, schema)` | `dict` | Structured data extraction |
+| `completion(messages, **kwargs)` | `str` | Full LiteLLM completion |
+
 ---
 
 ## Validation

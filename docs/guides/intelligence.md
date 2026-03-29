@@ -120,6 +120,103 @@ for result in report.results:
         print(f"  Score: {result.relevance_score:.2f}")
 ```
 
+## Intelligence Scouting (NEW in v0.2.0)
+
+**Goal-Driven Data Acquisition**
+
+Instead of providing a list of URLs, you can now provide a natural language **goal**, and Gweta will autonomously discover, navigate, and extract the content for you.
+
+### How it Works
+
+1. **Discovery**: Generates optimized search queries based on your goal.
+2. **Search**: Executes queries via DuckDuckGo to find potential sources.
+3. **Navigation**: Uses LLM intelligence to rank and select the most promising links.
+4. **Extraction**: Crawls and validates the content from discovered pages.
+
+### Quick Start
+
+```python
+from gweta.intelligence import IntelligenceScout
+
+# Initialize with an LLM (requires OPENAI_API_KEY or similar)
+scout = IntelligenceScout(model="gpt-4o-mini")
+
+# Define your goal
+goal = "Find current business registration fees for private limited companies in Zimbabwe"
+
+# Start scouting
+result = await scout.scout(
+    goal=goal,
+    max_pages=5,
+    max_depth=2
+)
+
+print(f"Discovered {len(result.urls_discovered)} URLs")
+print(f"Extracted {result.chunks_extracted} chunks from {result.pages_visited} pages")
+```
+
+## Smart Extraction
+
+**Extract Structured JSON from Messy Pages**
+
+Standard scrapers return raw text. Smart Extraction uses LLM intelligence to pull exactly what you need into a structured JSON format based on a schema.
+
+```python
+from gweta.intelligence import IntelligenceScout
+
+scout = IntelligenceScout(model="gpt-4o")
+
+# Extract with a specific schema
+result = await scout.scout(
+    goal="Extract contact details from these pages",
+    max_pages=3,
+    extract_schema={
+        "type": "object",
+        "properties": {
+            "organization": {"type": "string"},
+            "phone": {"type": "string"},
+            "email": {"type": "string"},
+            "address": {"type": "string"}
+        }
+    }
+)
+
+# Access structured data
+for entry in result.extracted_data:
+    print(entry["organization"], entry["email"])
+```
+
+## LLM Integration
+
+Gweta uses **LiteLLM**, providing a unified interface to 100+ LLM providers.
+
+### Configuration
+
+You can configure the model and API key during initialization or via environment variables:
+
+```python
+from gweta.intelligence import LLMClient
+
+# Direct configuration
+llm = LLMClient(
+    model="claude-3-5-sonnet-20240620",
+    api_key="sk-ant-..."
+)
+
+# Or via environment variables
+# export ANTHROPIC_API_KEY="sk-ant-..."
+llm = LLMClient(model="claude-3-5-sonnet-20240620")
+```
+
+### Supported Providers
+
+Since Gweta uses LiteLLM, you can use any of the following:
+- **OpenAI**: `gpt-4o`, `gpt-4-turbo`, `gpt-3.5-turbo`
+- **Anthropic**: `claude-3-5-sonnet`, `claude-3-opus`
+- **Google**: `gemini/gemini-1.5-pro`
+- **Mistral**: `mistral/mistral-large`
+- **Local**: `ollama/llama3`, `vllm/...`
+
 ## Core Components
 
 ### SystemIntent

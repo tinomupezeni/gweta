@@ -61,8 +61,10 @@ print(f"Rejected: {result.rejected_count} irrelevant chunks")
 
 ### Intelligence Layer (NEW in v0.2.0)
 
-Gweta understands your system's purpose and filters content for relevance:
+Gweta understands your system's purpose and discovers content autonomously:
 
+- **AI-Driven Discovery** - Goal-driven web scouting (scrapes the web based on your description)
+- **Smart Extraction** - Pull structured JSON from messy pages using LLMs
 - **SystemIntent** - Define what your RAG system is meant to do (YAML-based)
 - **RelevanceFilter** - Score chunks by semantic similarity to your intent
 - **Pipeline** - Unified API for intent-aware ingestion
